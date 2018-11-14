@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>管理员页面</h1>
+    <!--<h1>管理员页面</h1>-->
     <!--<router-link to="/manageLogin">去登陆</router-link>-->
     <router-view></router-view>
   </div>

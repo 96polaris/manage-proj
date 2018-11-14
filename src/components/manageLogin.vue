@@ -56,12 +56,12 @@
         }).then(function (result) {
           if (result.data.data != 0) {
             //如果用户登录成功，用户信息保存在sessionStorage中
-            // sessionStorage.setItem('userName', result.data.data.userName)
-            alert('登录成功，即将跳转到首页')
+            sessionStorage.setItem('manageName', result.data.data.manageName)
+            alert('登录成功，即将跳转到管理页')
             _this.$router.push({path: '/manage'})
 
           } else {
-            alert('登录失败，手机号或密码错误，请重新登录')
+            alert('登录失败，用户名或密码错误，请重新登录')
             _this.formLabelAlign.phone = ''
             _this.formLabelAlign.pwd = ''
             _this.$router.push({path: '/'})

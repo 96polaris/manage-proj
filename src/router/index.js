@@ -4,15 +4,18 @@ import manage from '../components/manage.vue'
 
 
 export const routes=[
-  {path:'/',component:manageLogin},
-  {path:'/manage', component:manage,
+  {path:'/',name:'manageLogin',component:manageLogin},
+  {path:'/manage',component:manage,
     beforeEnter:(to,from,next)=>{
-      if(from.name==manageLogin){
+      console.log(from.name);
+      if(from.name=='manageLogin'){
         next()
       }else{
-        alert('请登录')
-        next({path:'/'})
+        alert('请登录后查看')
+        next({path: '/'})
+
       }
+
 }},
   ]
 

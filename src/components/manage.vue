@@ -30,8 +30,6 @@
 
         <!--<hr>-->
       </div>
-
-
     </el-tab-pane>
     <el-tab-pane label="旅游活动审核" name="fourth">
 
@@ -44,7 +42,54 @@
         </div>
       </div>
     </el-tab-pane>
+
+    <el-tab-pane label="新增景点信息" name="five">
+      <el-form ref="form" label-width="80px" size="mini" id="inner">
+        <div style="margin-left: 60px; border: #c1e2b3 solid 1px;width: 150px;height: 150px;">
+          <img  style="":src="pic" alt="">
+        </div>
+      <input  id="provide" type="file" name="avatar"
+              @change="changeImage($event)"
+              accept="image/gif,image/jpeg,image/jpg,image/png"
+              ref="avatarInput"
+              multiple><br/>
+
+        <el-form-item label="景点名称">
+          <el-col :span="12">
+            <el-input v-model="scenicName"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="景点标题">
+          <el-col :span="12">
+            <el-input v-model="test"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="景点等级">
+          <el-col :span="12">
+            <el-input v-model="scenicLevel"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="景点地址">
+          <el-col :span="12">
+            <el-input v-model="scenicAddress"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="开放时间">
+          <el-col :span="12">
+            <el-input v-model="openHours"></el-input>
+            <!--<el-time-picker type="fixed-time" placeholder="选择时间" v-model="openHours" style="width: 100%;"></el-time-picker>-->
+          </el-col>
+        </el-form-item>
+        <el-form-item label="景点所在区域">
+          <el-col :span="12">
+            <el-input v-model="scenicLocation_scenicLocationId"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-button id="addBtn" type="button" class="btn btn-primary"@click="addScenic">确认发布</el-button>
+      </el-form>
+    </el-tab-pane>
   </el-tabs>
+
 </div>
 </template>
 
@@ -58,7 +103,16 @@
           scenic:[],
           route:[],
           note:[],
-          active:[]
+          active:[],
+          //上传景点数据
+          scenicName:'',
+          test:'',
+          scenicLevel:'',
+          scenicAddress:'',
+          openHours:'',
+          scenicLocation_scenicLocationId:'',
+          pic:'',
+          upath:'',
         };
       },
       mounted:function(){
@@ -189,11 +243,7 @@
             console.log(err);
           })
         },
-
-
-
-
-        //管理员审核活动通过
+//管理员审核活动通过
         checkActAgree(index){
 
           console.log(index);
@@ -252,22 +302,48 @@
           })
         },
 
+        //添加景点信息
+        addScenic() {
+          var zipFormData = new FormData();
+          // console.log(this.upath[0]);
+          zipFormData.append('scenicName', this.scenicName)
+          zipFormData.append('test', this.tese)
+          zipFormData.append('scenicLevel', this.scenicLevel)
+          zipFormData.append('scenicAddress', this.scenicAddress)
+          zipFormData.append('openHours', this.openHours)
+          zipFormData.append('scenicLocation_scenicLocationId', this.scenicLocation_scenicLocationId)
+          zipFormData.append('scenicImage', this.upath[0])
+          let config = {headers: {'Content-Type': 'multipart/form-data'}};
+          if(this.upath==''||this.scenicName==''||this.tese==''||this.scenicLevel==''||this.scenicAddress==''||this.openHours==''||this.scenicLocation_scenicLocationId==''){
+            alert('请输入完整信息')
+          }  else{
+            axios.post('http://localhost:3000/scenic/AddScenic', zipFormData, config)
+              .then(function (result) {
+                console.log(result.data)
+              })
+            alert("新景点发布成功")
+            // this.$router.push({path:'/activity'})
+          }
         },
-        secnicHot(index){
-          let _this=this
-          axios({
-            method: 'get',
-            data:{
-              scenicId:_this.scenic[index].scenicId
-          },
-            url: 'http://localhost:3000/manage/setScenic/',
-          }).then(function (result) {
-            alert('设置成功')
-            _this.scenic=result.data.data
-          }, function (err) {
-            console.log(err);
-          })
+        //选中文件后，将文件保存到实例的变量中
+        changeImage(e) {
+
+          this.upath = e.target.files;
+          console.log(this.upath);
+          let $target = e.target || e.srcElement
+          let file = $target.files[0]
+          var reader = new FileReader()
+          reader.onload = (data) => {
+            let res = data.target || data.srcElement
+            this.pic = res.result
+          }
+          reader.readAsDataURL(file)
+
+
         }
+
+
+        },
     }
 </script>
 
@@ -284,4 +360,10 @@
   .one{
     margin-top: 20px;
   }
+img{
+  width: 150px;
+  height: 150px;
+  display: flex;
+  overflow: hidden;
+}
 </style>
